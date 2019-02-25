@@ -7,7 +7,7 @@ class queue{
 	private:
 		T *buf;
 		size_t queue_len;
-		int front = -1, back = -1;
+		int front = -1, back = -1, cur_len = 0;
 	public:
 		queue(int n){
 			buf = (T *)malloc(sizeof(T)*n);
@@ -16,12 +16,15 @@ class queue{
 		void enqueue(T val){
 			if (this->isFull())
 				return;
-			T ans = buf[++front];
+			front = (front + 1)%queue_len;
+			T ans = buf[front];
+			cur_len++;
 		}
 		T dequeue(){
 			if (this->isEmpty())
 				return;
 			back = (back + 1)%queue_len;
+			cur_len--;
 			return buf[back];
 		}
 		bool isFull(){
@@ -29,5 +32,15 @@ class queue{
 		}
 		bool isEmpty(){
 			return front == back;
+		}
+		int size(){
+			return cur_len;
+		}
+		void display(){
+			int i = back;
+			while (back != front){
+				cout << buf[i++] << " ";
+			}
+			cout << buf[i] <<  endl;
 		}
 };
