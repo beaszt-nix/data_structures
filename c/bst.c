@@ -38,12 +38,12 @@ void insert(node *a, int val){
 	pred->right = NULL;
 }
 
-void preorder(node *a){
+void inorder(node *a){
 	if (a == NULL)
 		return;
-	preorder(a->left);
+	inorder(a->left);
 	printf("%d ", a->val);
-	preorder(a->right);
+	inorder(a->right);
 }
 
 node *ubound(node *a){
@@ -73,9 +73,9 @@ node * traverse(node *a, int val){
 	if (a->val == val || a==NULL)
 		return a;
 	if (a->val < val)
-		return traverse(a->right);
+		return traverse(a->right, val);
 	else
-		return traverse(a->left);
+		return traverse(a->left, val);
 }
 
 void delete(node *a, int val){
@@ -103,7 +103,7 @@ int main(){
 		scanf("%d", &temp);
 		insert(root, temp);
 	}
-	preorder(root);
+	inorder(root);
 	printf("\n");
 	printf("%d\n", height(root));
 }

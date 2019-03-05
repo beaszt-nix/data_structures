@@ -87,12 +87,12 @@ node * insert(node *a, int val){
 	return a;
 }
 
-void preorder(node *a){
+void inorder(node *a){
 	if (a == NULL)
 		return;
-	preorder(a->left);
+	inorder(a->left);
 	printf("%d ", a->val);
-	preorder(a->right);
+	inorder(a->right);
 }
 
 node *highest(node *a){
@@ -147,6 +147,6 @@ int main(){
 	for (int i = 1; i <= n; i++){
 		root = insert(root, i);
 	}
-	preorder(root);
+	printf("%d", root->height);
 	printf("\n");
 }
