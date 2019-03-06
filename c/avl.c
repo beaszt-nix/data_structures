@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct node {
 	int val;
@@ -14,8 +15,10 @@ int max(int a, int b){
 int height(node *a){
 	if (a == NULL)
 		return 0;
-	else
-		return 1 + max(height(a->left), height(a->right)); 
+	else{
+		a->height = 1 + max(height(a->left), height(a->right));
+		return a->height;
+	}
 }
 int bal_fact(node *a){
 	int bf;
@@ -26,14 +29,6 @@ int bal_fact(node *a){
 	if (a->right != NULL)
 		bf -= a->right->height;
 	return bf;
-}
-
-void update(node *a){
-	if (a == NULL)
-		return;
-	a->height = height(a);
-	update(a->left);
-	update(a->right);
 }
 
 node *leftRotate(node *a){
@@ -73,17 +68,17 @@ node * insert(node *a, int val){
 		a->val = val;
 		a->left = NULL;
 		a->right = NULL;
+		a->height=1;
 		return a;
 	}
 	if (a->val < val){
-		a->right = balance(a->right);
 		a->right = insert(a->right, val);
+		a->right = balance(a->right);
 	}
 	else{
+		a->left = insert(a->left, val);
 		a->left = balance(a->left);
-		a->left = insert(a->left, val); 
 	}
-	update(a);
 	return a;
 }
 
@@ -141,12 +136,15 @@ void delete(node *a, int val){
 	}
 }
 int main(){
+	clock_t t = clock();
 	int n;
 	scanf("%d", &n);
 	node *root = NULL;
 	for (int i = 1; i <= n; i++){
 		root = insert(root, i);
+		height(root);
 	}
-	printf("%d", root->height);
-	printf("\n");
+	printf("%d\n", root->height);
+	t = clock() - t;
+	printf("%lf for program execution\n", ((double)t)/CLOCKS_PER_SEC);
 }

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct node {
 	int val;
@@ -16,26 +17,19 @@ int height(node *a){
 	else
 		return 1 + max(height(a->left), height(a->right)); 
 }
-void insert(node *a, int val){
-	node *pred = NULL, *cur = a;
-	while (cur != NULL){
-		pred = cur;
-		if (cur->val < val)
-			cur = cur->right;
-		else
-			cur = cur->left;
+node * insert(node *a, int val){
+	if (a == NULL){
+		a = (node *)malloc(sizeof(node));
+		a->val = val;
+		a->left = NULL;
+		a->right = NULL;
+		return a;
 	}
-	if (pred->val < val){
-		pred->right = (node *)malloc(sizeof(node));
-		pred = pred->right;
-	}
-	else{
-		pred->left = (node *)malloc(sizeof(node));
-		pred = pred->left;
-	}
-	pred->val = val;
-	pred->left = NULL;
-	pred->right = NULL;
+	if (a->val < val)
+		a->right = insert(a->right, val);
+	else
+		a->left = insert(a->left, val);
+	return a;
 }
 
 void inorder(node *a){
@@ -93,17 +87,13 @@ void delete(node *a, int val){
 }
 int main(){
 	int n;
+	clock_t t = clock();
 	scanf("%d", &n);
-	node *root = (node *)malloc(sizeof(node));
-	scanf("%d", &(root->val));
-	root->left = NULL;
-	root->right = NULL;
-	for (int i = 0; i < n-1; i++){
-		int temp;
-		scanf("%d", &temp);
-		insert(root, temp);
+	node *root=NULL;
+	for (int i = 1; i <= n; i++){
+		root=insert(root, i);
 	}
-	inorder(root);
-	printf("\n");
 	printf("%d\n", height(root));
+	t=clock()-t;
+	printf("Time taken for execution: %lf\n", ((double)t)/CLOCKS_PER_SEC);
 }
