@@ -71,6 +71,12 @@ node * insert(node *a, int val){
 		a->height=1;
 		return a;
 	}
+	int l=0,r=0;
+	if (a->left != NULL)
+		l = a->left->height;
+	if (a->right != NULL)
+		r = a->right->height;
+	a->height=1+max(l,r);
 	if (a->val < val){
 		a->right = insert(a->right, val);
 		a->right = balance(a->right);
@@ -140,11 +146,9 @@ int main(){
 	int n;
 	scanf("%d", &n);
 	node *root = NULL;
-	for (int i = 1; i <= n; i++){
+	for (int i = 1; i <= n; i++)
 		root = insert(root, i);
-		height(root);
-	}
-	printf("%d\n", root->height);
 	t = clock() - t;
-	printf("%lf for program execution\n", ((double)t)/CLOCKS_PER_SEC);
+	printf("%d\n", height(root));
+	printf("\n%lf for program execution\n", ((double)t)/CLOCKS_PER_SEC);
 }
