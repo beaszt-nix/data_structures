@@ -40,7 +40,7 @@ void inorder(node *a){
 	inorder(a->right);
 }
 
-node *ubound(node *a){
+node *lowest(node *a){
 	node *cur = a, *pred = NULL;
 	while (cur != NULL){
 		pred = cur;
@@ -52,7 +52,7 @@ node *ubound(node *a){
 	return pred;
 }
 
-node *lbound(node *a){
+node *highest(node *a){
 	node *cur = a, *pred = NULL;
 	while (cur != NULL){
 		pred = cur;
@@ -63,28 +63,41 @@ node *lbound(node *a){
 	}
 	return pred;
 }
-node * traverse(node *a, int val){
-	if (a->val == val || a==NULL)
+node * search(node *a, int val){
+	if (a->val == val || a == NULL)
 		return a;
 	if (a->val < val)
-		return traverse(a->right, val);
+		return search(a->right, val);
 	else
-		return traverse(a->left, val);
+		return search(a->left, val);
 }
 
-void delete(node *a, int val){
-	node *temp = traverse(a, val);
-	if (height(a->left) < height(a->right)){
-		node *repl = ubound(a->right);
-		temp->val = repl->val;
-		free(repl);
-	}
+node* delete(node *a, int val){
+	if (a == NULL)
+		return a;
+	if (a->val < val)
+		a->right = delete(a->right, val);
+	else if (a->val > val)
+		a->left = delete(a->left, val);
 	else{
-		node *repl = lbound(a->left);
-		temp->val = repl->val;
-		free(repl);
+		if (a->left == NULL){
+			node *temp = a->right;
+			free(a);
+			return temp;
+		}
+		else if (a->right == NULL){
+			node *temp = a->left;
+			free(a);
+			return temp;
+		}
+		
+		node *next = lowest(a->right);
+		a->val = next->val;
+		a->right = delete(a->right, next->val);
 	}
+	return a;
 }
+
 int main(){
 	int n;
 	clock_t t = clock();
