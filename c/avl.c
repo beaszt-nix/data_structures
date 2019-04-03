@@ -158,11 +158,14 @@ node* delete(node *a, int val){
 }
 
 int main(){
+	clock_t t=clock();
 	int n;
 	scanf("%d", &n);
 	node *root = NULL;
 	for (int i = 1; i <= n; i++){
 		root = insert(root, i);
 	}
+	t = clock()-t;
 	printf("%d\n", height(root));
+	printf("%lf is time taken\n", ((double)t)/CLOCKS_PER_SEC);
 }
