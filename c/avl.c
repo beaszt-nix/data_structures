@@ -17,8 +17,7 @@ int height(node *a){
 	if (a == NULL)
 		return 0;
 	else{
-		a->height = 1 + max(height(a->left), height(a->right));
-		return a->height;
+		return 1 + max(height(a->left), height(a->right));
 	}
 }
 int bal_fact(node *a){
@@ -36,6 +35,22 @@ node *leftRotate(node *a){
 	node *temp = a->right;
 	a->right = temp->left;
 	temp->left = a;
+	if (a->left != NULL && a->right != NULL)
+		a->height = 1 + max(a->left->height, a->right->height);
+	else{
+		if (a->left == NULL && a->right != NULL)
+			a->height = 1 + a->right->height;
+		else if(a->right == NULL && a->left != NULL)
+			a->height = 1 + a->left->height;
+	}
+	if (temp->left != NULL && temp->right != NULL)
+			temp->height = 1 + max(temp->left->height, temp->right->height);
+	else{
+		if (temp->left == NULL && temp->right != NULL)
+			temp->height = 1 + temp->right->height;
+		else if(temp->right == NULL && temp->left != NULL)
+			temp->height = 1 + temp->left->height;
+	}
 	return temp;
 }
 
@@ -43,6 +58,24 @@ node *rightRotate(node *a){
 	node *temp = a->left;
 	a->left = temp->right;
 	temp->right = a;
+	if (a->left != NULL && a->right != NULL){
+		a->height = 1 + max(a->right->height, a->left->height);
+	}
+	else{
+		if (a->left == NULL && a->right != NULL)
+			a->height = 1 + a->right->height;
+		else if (a->right == NULL && a->left != NULL)
+			a->height = 1 + a->left->height;
+	}
+	if (temp->left != NULL && temp->right != NULL){
+		temp->height = 1 + max(temp->left->height, temp->right->height);
+	}
+	else{
+		if (temp->left == NULL && temp->right != NULL)
+			temp->height = 1 + temp->right->height;
+		else if (temp->right == NULL && temp->left != NULL)
+			temp->height = 1 + temp->left->height;
+	}
 	return temp;
 }
 node *balance(node *a){
@@ -78,7 +111,9 @@ node * insert(node *a, int val){
 		l = a->left->height;
 	if (a->right != NULL)
 		r = a->right->height;
-	a->height = 1 + max(l, r);
+	a->height = 1 + max(l,r);
+	if (a->right == NULL && a->left == NULL)
+		a->height += 1;		
 	if (a->val < val){
 		a->right = insert(a->right, val);
 		a->right = balance(a->right);
@@ -141,20 +176,29 @@ node* delete(node *a, int val){
 		if (a->left == NULL){
 			node *temp = a->right;
 			free(a);
-			return temp;
+			a = temp;
 		}
 		else if (a->right == NULL){
 			node *temp = a->left;
 			free(a);
-			return temp;
+			a = temp;
 		}
-		
+		else{	
 		node *next = lowest(a->right);
 		a->val = next->val;
 		a->right = delete(a->right, next->val);
+		}
 	}
+	if (a != NULL){
+		int l=0,r=0;
+	if (a->left != NULL)
+		l = a->left->height;
+	if (a->right != NULL)
+		r = a->right->height;
+	a->height = 1 + max(l,r);
+	a = balance(a);
+	} 
 	return a;
-
 }
 
 int main(){
@@ -165,7 +209,6 @@ int main(){
 	for (int i = 1; i <= n; i++){
 		root = insert(root, i);
 	}
-	t = clock()-t;
-	printf("%d\n", height(root));
-	printf("%lf is time taken\n", ((double)t)/CLOCKS_PER_SEC);
+	t=clock()-t;
+	printf("\n%lf is time taken\n", ((double)t)/CLOCKS_PER_SEC);
 }
